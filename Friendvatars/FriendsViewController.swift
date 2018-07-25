@@ -103,6 +103,23 @@ final class FriendsViewController: UITableViewController {
       cell.avatarImageView.image = image
     } else {
       // request the avatar from Gravatar
+      let emailHash = user.email.trimmingCharacters(in: .whitespacesAndNewlines)
+        .lowercased()
+        .md5()
+      
+      if let url = URL(string: "https://www.gravatar.com/avatar/" + emailHash) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+          guard let data = data, let image = UIImage(data: data) else {
+            return
+          }
+          
+          self.imageCache.setObject(image, forKey: user.email as NSString)
+          
+          DispatchQueue.main.async {
+            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+          }
+          }.resume()
+      }
     }
     
     return cell
