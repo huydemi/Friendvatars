@@ -100,6 +100,7 @@ final class AuthViewController: UIViewController {
   
   @IBAction func signInButtonPressed() {
     // sign in
+    signIn()
   }
   
   // MARK: - Helpers
@@ -117,6 +118,27 @@ final class AuthViewController: UIViewController {
       name: NSNotification.Name.UIKeyboardWillHide,
       object: nil
     )
+  }
+  
+  private func signIn() {
+    view.endEditing(true)
+    
+    guard let email = emailField.text, email.count > 0 else {
+      return
+    }
+    guard let password = passwordField.text, password.count > 0 else {
+      return
+    }
+    
+    let name = UIDevice.current.name
+    let user = User(name: name, email: email)
+    
+    do {
+      try AuthController.signIn(user, password: password)
+    } catch {
+      print("Error signing in: \(error.localizedDescription)")
+    }
+
   }
   
   // MARK: - Notifications
@@ -175,7 +197,7 @@ extension AuthViewController: UITextFieldDelegate {
     case TextFieldTag.email.rawValue:
       passwordField.becomeFirstResponder()
     case TextFieldTag.password.rawValue:
-      break
+      signIn()
     default:
       return false
     }

@@ -72,6 +72,7 @@ final class FriendsViewController: UITableViewController {
   
   @objc private func signOut() {
     // sign out
+    try? AuthController.signOut()
   }
   
   override func numberOfSections(in tableView: UITableView) -> Int {
